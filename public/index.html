@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Registration Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+        User Registration
+      </h1>
+
+      <form id="registrationForm" class="space-y-4">
+        <div>
+          <label
+            for="fullName"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Full Name *
+          </label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter your full name"
+          />
+        </div>
+
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Email Address *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="your.email@example.com"
+          />
+        </div>
+
+        <div>
+          <label
+            for="phone"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="1234567890"
+          />
+        </div>
+
+        <div>
+          <label for="age" class="block text-sm font-medium text-gray-700 mb-1">
+            Age *
+          </label>
+          <input
+            type="number"
+            id="age"
+            name="age"
+            required
+            min="18"
+            max="120"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="25"
+          />
+        </div>
+
+        <div>
+          <label
+            for="country"
+            class="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Country *
+          </label>
+          <select
+            id="country"
+            name="country"
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="select">Select your country</option>
+            <option value="us">United States</option>
+            <option value="uk">United Kingdom</option>
+            <option value="ca">Canada</option>
+            <option value="au">Australia</option>
+            <option value="in">India</option>
+            <option value="de">Germany</option>
+            <option value="fr">France</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <button
+          type="submit"
+          id="submitBtn"
+          class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+        >
+          Register
+        </button>
+      </form>
+
+      <!-- Success Message -->
+      <div
+        id="successMessage"
+        class="hidden mt-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md"
+      >
+        <h3 class="font-bold">Registration Successful!</h3>
+        <p>Welcome! Your account has been created.</p>
+        <button
+          onclick="resetForm()"
+          class="mt-2 text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+        >
+          Register Another User
+        </button>
+      </div>
+
+      <!-- Error Messages -->
+      <div id="errorContainer" class="hidden mt-4">
+        <div
+          class="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md"
+        >
+          <h3 class="font-bold mb-2">Please fix the following errors:</h3>
+          <ul id="errorList" class="list-disc list-inside space-y-1"></ul>
+        </div>
+      </div>
+
+      <!-- View Users Button -->
+      <div class="mt-6 text-center">
+        <button
+          onclick="viewUsers()"
+          class="text-blue-600 hover:text-blue-800 underline"
+        >
+          View All Registered Users
+        </button>
+      </div>
+
+      <!-- Users List -->
+      <div id="usersList" class="hidden mt-4">
+        <h3 class="font-bold text-gray-800 mb-2">Registered Users:</h3>
+        <div id="usersContainer" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("registrationForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const submitBtn = document.getElementById("submitBtn");
+          const formData = new FormData(e.target);
+          const data = Object.fromEntries(formData);
+
+          // Disable submit button
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Registering...";
+
+          try {
+            const response = await fetch("/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+              showSuccess();
+            } else {
+              showErrors(result.errors);
+            }
+          } catch (error) {
+            showErrors(["Network error. Please try again."]);
+          }
+
+          // Re-enable submit button
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Register";
+        });
+
+      function showSuccess() {
+        document.getElementById("successMessage").classList.remove("hidden");
+        document.getElementById("errorContainer").classList.add("hidden");
+        document.getElementById("registrationForm").classList.add("hidden");
+      }
+
+      function showErrors(errors) {
+        const errorContainer = document.getElementById("errorContainer");
+        const errorList = document.getElementById("errorList");
+
+        errorList.innerHTML = "";
+        errors.forEach((error) => {
+          const li = document.createElement("li");
+          li.textContent = error;
+          errorList.appendChild(li);
+        });
+
+        errorContainer.classList.remove("hidden");
+        document.getElementById("successMessage").classList.add("hidden");
+      }
+
+      function resetForm() {
+        document.getElementById("registrationForm").reset();
+        document.getElementById("registrationForm").classList.remove("hidden");
+        document.getElementById("successMessage").classList.add("hidden");
+        document.getElementById("errorContainer").classList.add("hidden");
+        document.getElementById("usersList").classList.add("hidden");
+      }
+
+      async function viewUsers() {
+        try {
+          const response = await fetch("/users");
+          const data = await response.json();
+
+          const usersContainer = document.getElementById("usersContainer");
+          const usersList = document.getElementById("usersList");
+
+          if (data.users.length === 0) {
+            usersContainer.innerHTML =
+              '<p class="text-gray-500">No users registered yet.</p>';
+          } else {
+            usersContainer.innerHTML = data.users
+              .map(
+                (user) => `
+                        <div class="bg-gray-50 p-3 rounded">
+                            <strong>${user.fullName}</strong><br>
+                            <small class="text-gray-600">${user.email} • ${user.country}</small>
+                        </div>
+                    `
+              )
+              .join("");
+          }
+
+          usersList.classList.remove("hidden");
+        } catch (error) {
+          alert("Error loading users");
+        }
+      }
+    </script>
+  </body>
+</html>
