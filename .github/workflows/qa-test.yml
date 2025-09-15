@@ -42,12 +42,14 @@ jobs:
           project_id: ${{ secrets.QATECH_PROJECT_ID }}
           blocking: true
           applications_config: |
-            [
-              {
-                "name": "default",
-                "url": "https://demo-reg-form.onrender.com"
-              }
-            ]
+            {
+              "applications": [
+                {
+                  "name": "default",
+                  "url": "https://demo-reg-form.onrender.com"
+                }
+              ]
+            }
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
