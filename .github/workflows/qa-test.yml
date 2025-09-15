@@ -41,6 +41,7 @@ jobs:
           api_token: ${{ secrets.QATECH_API_TOKEN }}
           project_id: ${{ secrets.QATECH_PROJECT_ID }}
           blocking: true
+          test_plan_short_id: "1ao3na"
           applications_config: |
             {
               "applications": [
