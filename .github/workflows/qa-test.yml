@@ -38,10 +38,10 @@ jobs:
       - name: Run QA.tech AI tests
         uses: QAdottech/run-action@v2
         with:
-          api-token: ${{ secrets.QATECH_API_TOKEN }}
-          project-id: ${{ secrets.QATECH_PROJECT_ID }}
-          base-url: "https://demo-reg-form.onrender.com"
-          wait-for-completion: true
+          api_token: ${{ secrets.QATECH_API_TOKEN }}
+          project_id: ${{ secrets.QATECH_PROJECT_ID }}
+          api_url: "https://demo-reg-form.onrender.com"
+          blocking: true
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
