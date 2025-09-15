@@ -40,8 +40,14 @@ jobs:
         with:
           api_token: ${{ secrets.QATECH_API_TOKEN }}
           project_id: ${{ secrets.QATECH_PROJECT_ID }}
-          api_url: "https://demo-reg-form.onrender.com"
           blocking: true
+          applications_config: |
+            [
+              {
+                "name": "default",
+                "url": "https://demo-reg-form.onrender.com"
+              }
+            ]
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
